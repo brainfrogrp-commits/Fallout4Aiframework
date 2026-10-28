@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "fallout4-ai-framework",
+  "server_folder": "Fallout4AIFrameworkServer",
+  "name": "Fallout 4 AI Framework",
+  "description": "Fallout 4 AI Framework, an AI mod made with KAGRENAC AI Mod Maker.",
+  "dashboard_path": "ui/",
+  "health_path": "health.php",
+  "requirements": { "php": "8.2", "postgresql": true },
+  "setup": {
+    "config_template": "config/config.example.php",
+    "config_path": "config/config.php",
+    "token_placeholder": "CHANGE_ME_TOKEN",
+    "database_placeholder": "example_ai_mod",
+    "migrate_script": "scripts/migrate.php"
+  },
+  "branches": { "default": "main", "allowed": ["main", "dev"] },
+  "assets": {
+    "icon": "ui/images/kagrenac.png",
+    "banner": "ui/images/kagrenac.png"
+  }
+}
