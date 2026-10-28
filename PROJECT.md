@@ -11,13 +11,13 @@ permission.
 
 | Question | Answer |
 |---|---|
-| Game, version and modding tools | Fallout 4 VR (Steam) with the GingasVR Wabbajack modlist ("Fallout VR Essentials Overhaul", version to confirm), launched through MO2 and F4SEVR; exact game build and F4SEVR version to confirm |
-| Starting feature (new companion or existing NPC, and what it does) | To confirm with the user: talk by voice to an existing NPC (proposed first slice: the current companion) |
+| Game, version and modding tools | Fallout 4 VR (Steam) with GingasVR Fallout VR Essentials Overhaul 20.1 (Wabbajack, MO2), F4SEVR 0.6.21, VR Address Library |
+| Starting feature (new companion or existing NPC, and what it does) | Talk by voice to any existing NPC the player looks at or names nearby; later, up to 3-way conversations where NPCs also talk to each other |
 | Mod name | Fallout 4 AI Framework |
 | Project id and name in `dwemer-mod.json` (own values, set before deploy) | `fallout4-ai-framework`, Fallout 4 AI Framework |
 | Voice (none, or PocketTTS replies; speech input only if asked: Parakeet push-to-talk into the editable draft) | Voice only: PocketTTS replies with no on-screen subtitles; speech input requested (Parakeet or Whisper push-to-talk on a VR controller button), since VR has no keyboard |
-| LLM provider (name only) | |
-| DwemerDistro (the one WSL distro name) | |
+| LLM provider (name only) | OpenRouter |
+| DwemerDistro (the one WSL distro name) | DwemerAI4Skyrim3 |
 
 ## Gameplay design
 
@@ -29,15 +29,15 @@ planned.
 
 | Design question | Answer |
 |---|---|
-| Player fantasy (one sentence) | |
-| Observable loop (what the player does, sees and hears in 2-3 minutes) | |
-| Interaction mode (manual, ambient/social, companion or operator; a mix is fine) | |
-| Trigger and bounds (player line, or the one automatic event with its limits) | |
-| Participants and listeners (who is present, who can hear) | |
-| Decision and stakes (what can change; decided by a rule, the engine, JEV or dialogue) | |
-| Actions and the outcome the player sees or hears | |
-| Memory (verified events only; one session or every session) | |
-| Missing mechanism and next bounded probe (or none) | |
+| Player fantasy (one sentence) | Walk up to anyone in the Commonwealth in VR and just talk to them out loud, and have them talk back and to each other |
+| Observable loop (what the player does, sees and hears in 2-3 minutes) | Look at or name an NPC, hold push-to-talk, speak, release; hear that NPC answer in their own voice; in a group, a second NPC may chime in |
+| Interaction mode (manual, ambient/social, companion or operator; a mix is fine) | manual first; social (NPC-to-NPC inside a player-started conversation) second |
+| Trigger and bounds (player line, or the one automatic event with its limits) | Player's spoken line only; NPC-to-NPC follow-ups capped at 2 lines per player line |
+| Participants and listeners (who is present, who can hear) | The NPC looked at or named, plus up to 2 other live NPCs within talking distance; needs our own participant contract (not in KAGRENAC yet) |
+| Decision and stakes (what can change; decided by a rule, the engine, JEV or dialogue) | Who answers: the addressed NPC, or JEV picks from participants; nothing else changes in the first slice |
+| Actions and the outcome the player sees or hears | None at first; the outcome is heard voice |
+| Memory (verified events only; one session or every session) | Conversation history per NPC across sessions |
+| Missing mechanism and next bounded probe (or none) | Participant contract (server); VR gaze target and controller button read (plugin load probe first) |
 
 ## Integration plan (required before building mod code)
 
@@ -75,8 +75,8 @@ Unknown. A blocked stage does not stop the others.
 
 | Stage | Done only with | State | Latest evidence (date, kind) |
 |---|---|---|---|
-| 1. Brief: game, starting feature, mod name | source: the Brief rows above | in progress: starting feature to confirm; distro name missing | 2026-10-28, source: brief from conversation |
-| 2. Integration plan; each Unknown researched, with an option chosen | source: Gameplay design rows filled, with an existing mechanism for the requested loop and any automatic trigger, or the missing one named with its next probe; every plan row cited, or Unknown with an option chosen | not started: survey the installed game and qualify the integration before mod code | 2026-10-28, source: no reference plan for fo4vr; follow docs/ENGINE_PLANNING.md |
+| 1. Brief: game, starting feature, mod name | source: the Brief rows above | done | 2026-10-28, source: brief from conversation |
+| 2. Integration plan; each Unknown researched, with an option chosen | source: Gameplay design rows filled, with an existing mechanism for the requested loop and any automatic trigger, or the missing one named with its next probe; every plan row cited, or Unknown with an option chosen | in progress: install surveyed from f4sevr.log and modlist; loader and gaze probes next | 2026-10-28, source: user's f4sevr.log and modlist.txt, Mantella source |
 | 3. DwemerDistro: own id committed, deployed | build: `project.ps1 deploy -WslDistro <name>` reported the commit deployed (health ok, exposure probes HTTP 403). Doctor output is diagnostic only; pairing is part of 6b | in progress: own id set; commit, then deploy | |
 | 4. LLM | provider: the dashboard **Send test**, or a real `turn.php` turn (same server path), returned a real reply from the chosen provider (nothing has to answer on port 1234 unless that is the provider) | not started | |
 | 5. Voice | user-reported or in-game: a PocketTTS reply heard on the dashboard **Speak** test or in the game (a generated WAV is not heard); or `not wanted` | not started | |
@@ -123,3 +123,4 @@ run. Kind is one of source, build, fixture, provider, user-reported or in-game; 
 | Date | Kind | What ran (command or in-game step) | Result |
 |---|---|---|---|
 | 2026-10-28 | source | Copied template commit 1f845fbd0611 with `git archive`; set id, name and server folder | Nothing deployed or built yet |
+| 2026-10-28 | source | Read user's f4sevr.log and MO2 modlist.txt | F4SEVR 0.6.21 loads 40 plugins; 246 full plugins, ~9 slots free; Mantella, F4SE_HTTP and TopicInfoPatcher present |
