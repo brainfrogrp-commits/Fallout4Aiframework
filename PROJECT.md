@@ -112,6 +112,8 @@ uncommitted code and interrupted checks remain explicit pending work.
 |---|---|---|
 | 2026-10-28 | Started from KAGRENAC AI Mod Maker commit 1f845fbd0611 (equivalent of `project.ps1 new`, done by hand on Linux) | An independent copy with its own id; the template is unchanged |
 | 2026-10-28 | One repository; game side in `ports/fo4vr/` | Template default |
+| 2026-10-28 | Settings in an MCM VR menu; push-to-talk controller, button and hold/toggle configurable there | User request; MCM VR is already in the list and needs no terminal records |
+| 2026-10-28 | Build the plugin with GitHub Actions (Windows runner) | User has no Visual Studio; the DLL is downloaded from the run |
 | 2026-10-28 | Voice-only replies (no subtitles); push-to-talk speech input instead of the typed composer | User's choice; VR has no keyboard |
 
 ## Latest evidence
