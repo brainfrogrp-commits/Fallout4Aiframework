@@ -15,7 +15,7 @@ permission.
 | Starting feature (new companion or existing NPC, and what it does) | Talk by voice to any existing NPC the player looks at or names nearby; later, up to 3-way conversations where NPCs also talk to each other |
 | Mod name | Fallout 4 AI Framework |
 | Project id and name in `dwemer-mod.json` (own values, set before deploy) | `fallout4-ai-framework`, Fallout 4 AI Framework |
-| Voice (none, or PocketTTS replies; speech input only if asked: Parakeet push-to-talk into the editable draft) | Voice only: PocketTTS replies with no on-screen subtitles; speech input requested (Parakeet or Whisper push-to-talk on a VR controller button), since VR has no keyboard |
+| Voice (none, or PocketTTS replies; speech input only if asked: Parakeet push-to-talk into the editable draft) | Voice only: Inworld TTS replies (cloud; PocketTTS as fallback) with no on-screen subtitles; speech input requested (Parakeet or Whisper push-to-talk on a VR controller button), since VR has no keyboard |
 | LLM provider (name only) | OpenRouter |
 | DwemerDistro (the one WSL distro name) | DwemerAI4Skyrim3 |
 
@@ -78,8 +78,8 @@ Unknown. A blocked stage does not stop the others.
 | 1. Brief: game, starting feature, mod name | source: the Brief rows above | done | 2026-10-28, source: brief from conversation |
 | 2. Integration plan; each Unknown researched, with an option chosen | source: Gameplay design rows filled, with an existing mechanism for the requested loop and any automatic trigger, or the missing one named with its next probe; every plan row cited, or Unknown with an option chosen | in progress: install surveyed from f4sevr.log and modlist; loader and gaze probes next | 2026-10-28, source: user's f4sevr.log and modlist.txt, Mantella source |
 | 3. DwemerDistro: own id committed, deployed | build: `project.ps1 deploy -WslDistro <name>` reported the commit deployed (health ok, exposure probes HTTP 403). Doctor output is diagnostic only; pairing is part of 6b | done | 2026-10-28, build: deploy of 9624a16 healthy on listeners 8081, 8083, 8088 and 19000, 14 of 14 protected paths HTTP 403 |
-| 4. LLM | provider: the dashboard **Send test**, or a real `turn.php` turn (same server path), returned a real reply from the chosen provider (nothing has to answer on port 1234 unless that is the provider) | not started | |
-| 5. Voice | user-reported or in-game: a PocketTTS reply heard on the dashboard **Speak** test or in the game (a generated WAV is not heard); or `not wanted` | not started | |
+| 4. LLM | provider: the dashboard **Send test**, or a real `turn.php` turn (same server path), returned a real reply from the chosen provider (nothing has to answer on port 1234 unless that is the provider) | done | 2026-10-28, provider: dashboard Send test returned a real OpenRouter reply (google/gemma-4-31b-it), user-reported |
+| 5. Voice | user-reported or in-game: a PocketTTS reply heard on the dashboard **Speak** test or in the game (a generated WAV is not heard); or `not wanted` | in progress: Inworld provider added to the server; deploy it, set the key and hear Speak | |
 | 6a. Game-side build | build: the port's preflight passed and its build finished into the folders under Paths (for example its doctor, then its build exit 0 with a schema-2 `build.json`, [build records](docs/PORT_BUILD_RECORDS.md)) | not started | |
 | 6b. Game-side runtime, paired | build: the runtime folder staged from that build (with its schema-2 `runtime.json`), `project.ps1 pair` wrote its private `config.json`, and the mod is installed where its qualified loader loads it on a normal game launch, with no per-session command, attach or helper start ([automatic load and connect](docs/ENGINE_PLANNING.md#automatic-load-and-connect)); a missing autoload mechanism keeps this blocked with its next probe; nothing launched yet | not started | |
 | 6c. First prototype | in-game: the user started the game through its normal launch (its own entry, or a cited loader's documented offline entry) and the mod loaded and connected to this project's server by itself; the Gameplay design loop seen in the game, with its automatic trigger when one was requested and heard voice when voice was wanted; the player's own line typed in the in-game composer to the recipient it shows (and push-to-talk into that editable draft when speech input was asked for), with controls released afterwards; with only this project's route unreachable the game stayed playable and said so in game | not started | |
@@ -114,6 +114,7 @@ uncommitted code and interrupted checks remain explicit pending work.
 | 2026-10-28 | One repository; game side in `ports/fo4vr/` | Template default |
 | 2026-10-28 | Settings in an MCM VR menu; push-to-talk controller, button and hold/toggle configurable there | User request; MCM VR is already in the list and needs no terminal records |
 | 2026-10-28 | `chmod g-w /var/www/html` in DwemerAI4Skyrim3 (was `drwxrwsr-x dwemer:www-data`) | Core refuses a group-writable web root; undo with `chmod g+w /var/www/html`. Update Distro may reset it |
+| 2026-10-28 | Add an `inworld` TTS provider to `lib/speech.php` and the Voice page | User wants Inworld voices; KAGRENAC shipped only PocketTTS and OpenAI-compatible TTS. Profiles can give each NPC its own Inworld voice |
 | 2026-10-28 | Build the plugin with GitHub Actions (Windows runner) | User has no Visual Studio; the DLL is downloaded from the run |
 | 2026-10-28 | Voice-only replies (no subtitles); push-to-talk speech input instead of the typed composer | User's choice; VR has no keyboard |
 
@@ -128,3 +129,5 @@ run. Kind is one of source, build, fixture, provider, user-reported or in-game; 
 | 2026-10-28 | source | Copied template commit 1f845fbd0611 with `git archive`; set id, name and server folder | Nothing deployed or built yet |
 | 2026-10-28 | source | Read user's f4sevr.log and MO2 modlist.txt | F4SEVR 0.6.21 loads 40 plugins; 246 full plugins, ~9 slots free; Mantella, F4SE_HTTP and TopicInfoPatcher present |
 | 2026-10-28 | build | `project.ps1 deploy -WslDistro DwemerAI4Skyrim3` (after `chmod g-w /var/www/html`) | Installed 9624a16 at /var/www/html/Fallout4AIFrameworkServer; health ok on 4 listeners; config made dashboard-writable |
+| 2026-10-28 | provider | Dashboard LLM Send test (OpenRouter, google/gemma-4-31b-it) | Real reply, user-reported |
+| 2026-10-28 | fixture | Inworld TTS against a local fake endpoint: WAV reply, bare-PCM reply, HTTP 400, missing key, session-token key | WAV returned for the first two; clean refusals for the rest; Basic auth and LINEAR16 sent |

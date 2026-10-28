@@ -10,7 +10,7 @@ const KEY_SLOTS = [
     'llm' => ['title' => 'LLM API key', 'path' => 'llm.api_key', 'link' => 'llm.php', 'page' => 'LLM',
         'uses' => 'OpenAI-compatible chat (openai and local modes, optional) and OpenRouter chat (required). Never sent in dwemerllm mode.'],
     'tts' => ['title' => 'Text to speech API key', 'path' => 'tts.api_key', 'link' => 'voice.php', 'page' => 'Voice',
-        'uses' => 'OpenAI-compatible /v1/audio/speech (openai provider only, optional). PocketTTS needs no key.'],
+        'uses' => 'Inworld TTS (inworld provider, required: the Portal\'s Basic (Base64) value) and OpenAI-compatible /v1/audio/speech (openai provider, optional). PocketTTS needs no key.'],
     'decision' => ['title' => 'NPC selection API key (OpenRouter JEV)', 'path' => 'decision.api_key', 'link' => 'decision_settings.php', 'page' => 'NPC selection',
         'uses' => 'OpenRouter decisions API used by NPC selection in jev mode. Separate from the LLM key.'],
     'embeddings' => ['title' => 'Embeddings API key', 'path' => 'embeddings.api_key', 'link' => 'memory_settings.php', 'page' => 'Memory settings',

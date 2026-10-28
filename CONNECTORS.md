@@ -48,7 +48,8 @@ same way in every mode.
 
 Text always comes first. Start with PocketTTS for text-to-speech (TTS) and Parakeet for
 speech-to-text (STT), the recommended DwemerDistro starting choices; the `openai` TTS and
-`fasterwhisper` STT blocks are supported alternatives. Only these providers are wired in:
+`fasterwhisper` STT blocks are supported alternatives, and `inworld` is a cloud TTS option.
+Only these providers are wired in:
 
 ```php
 'tts' => ['enabled' => true, 'provider' => 'pockettts',
@@ -59,6 +60,12 @@ speech-to-text (STT), the recommended DwemerDistro starting choices; the `openai
 ```php
 'tts' => ['enabled' => true, 'provider' => 'openai',
           'url' => 'https://your-host/v1/audio/speech', 'model' => 'your-tts-model', 'voice' => 'your-voice',
+          'api_key' => '', 'timeout_seconds' => 30],
+```
+
+```php
+'tts' => ['enabled' => true, 'provider' => 'inworld',
+          'url' => 'https://api.inworld.ai/tts/v1/voice', 'model' => 'inworld-tts-2-flash', 'voice' => 'Dennis',
           'api_key' => '', 'timeout_seconds' => 30],
 ```
 
@@ -75,7 +82,12 @@ speech-to-text (STT), the recommended DwemerDistro starting choices; the `openai
 ```
 
 The `openai` TTS provider asks for `response_format: wav`. Any reply that is not a WAV
-(`RIFF` ... `WAVE`) is refused. `parakeet` uploads the WAV as multipart field `file` with
+(`RIFF` ... `WAVE`) is refused. `inworld` sends `voiceId`, `modelId` and LINEAR16 at 24 kHz with
+`Authorization: Basic <key>`; the key is the Inworld Portal's Basic (Base64) value (a raw
+`key:secret` is encoded for you; a session token starting `eyJ` is refused). Its JSON
+`audioContent` is used as the WAV, or wrapped in a WAV header when it is bare PCM. Choose it on
+the dashboard Voice page; `project.ps1 configure -Tts` only switches PocketTTS on or off. A
+profile's voice overrides `voice` per NPC, so each NPC can have its own Inworld voice. `parakeet` uploads the WAV as multipart field `file` with
 `model` (`whisper-1`); `fasterwhisper` uploads it as `form_field` (`audio_file`). Both must
 answer JSON `{"text": "..."}`. STT text must be 1-1000 characters of UTF-8, otherwise the
 player is asked to type. Configs without `provider` keep using PocketTTS and faster-whisper.

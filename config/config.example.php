@@ -51,12 +51,14 @@ return [
     'tts' => [
         'enabled' => false,
         // 'pockettts' DwemerDistro PocketTTS (audio.cpp). 'openai' any OpenAI-compatible
-        // /v1/audio/speech endpoint that can return WAV (model is then required).
+        // /v1/audio/speech endpoint that can return WAV (model is then required). 'inworld' Inworld
+        // cloud TTS: url https://api.inworld.ai/tts/v1/voice, model inworld-tts-2-flash, voice a
+        // Portal voice name or ID, api_key the Portal's Basic (Base64) value.
         'provider' => 'pockettts',
         'url' => 'http://127.0.0.1:8086/v1/audio/speech',
         'model' => 'pocket-tts',
         'voice' => 'alba',
-        'api_key' => '',            // Optional, openai provider only.
+        'api_key' => '',            // openai (optional) or inworld (required) only.
         'timeout_seconds' => 30,
     ],
     'stt' => [

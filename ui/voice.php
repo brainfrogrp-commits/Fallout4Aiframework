@@ -5,10 +5,13 @@
 require __DIR__ . '/common.php';
 require __DIR__ . '/../lib/config_writer.php';
 
-const TTS_PROVIDERS = ['pockettts' => 'PocketTTS (DwemerDistro)', 'openai' => 'OpenAI-compatible /v1/audio/speech (WAV)'];
+const TTS_PROVIDERS = ['pockettts' => 'PocketTTS (DwemerDistro)', 'openai' => 'OpenAI-compatible /v1/audio/speech (WAV)',
+    'inworld' => 'Inworld TTS (cloud, needs an API key)'];
 const STT_PROVIDERS = ['parakeet' => 'Parakeet (DwemerDistro)', 'fasterwhisper' => 'faster-whisper (DwemerDistro)'];
 // What speak.php sends to PocketTTS when tts.model / tts.voice are not set.
 const POCKETTTS_DEFAULTS = ['model' => 'pocket-tts', 'voice' => 'alba'];
+// What a blank URL or model saves for Inworld; the voice is any name or ID from the Inworld Portal.
+const INWORLD_DEFAULTS = ['url' => 'https://api.inworld.ai/tts/v1/voice', 'model' => 'inworld-tts-2-flash'];
 const STT_DEFAULT_URLS = [
     'parakeet' => 'http://127.0.0.1:8022/v1/audio/transcriptions',
     'fasterwhisper' => 'http://127.0.0.1:9876/api/v0/transcribe',
@@ -65,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $config !== null) {
         if ($form['tts_provider'] === 'pockettts') {
             $form['tts_model'] = $form['tts_model'] !== '' ? $form['tts_model'] : POCKETTTS_DEFAULTS['model'];
             $form['tts_voice'] = $form['tts_voice'] !== '' ? $form['tts_voice'] : POCKETTTS_DEFAULTS['voice'];
+        } elseif ($form['tts_provider'] === 'inworld') {
+            $form['tts_url'] = $form['tts_url'] !== '' ? $form['tts_url'] : INWORLD_DEFAULTS['url'];
+            $form['tts_model'] = $form['tts_model'] !== '' ? $form['tts_model'] : INWORLD_DEFAULTS['model'];
         }
         $values = [
             'enabled' => $form['tts_enabled'],
@@ -80,6 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $config !== null) {
             [$errorField, $message] = ['tts_url', 'TTS URL must be an http(s) URL (required when enabled).'];
         } elseif ($values['model'] === null || ($values['provider'] === 'openai' && $values['model'] === '')) {
             [$errorField, $message] = ['tts_model', 'Model must be letters, digits and _ . : / @ + - (required for the openai provider).'];
+        } elseif ($values['provider'] === 'inworld' && $values['voice'] === '') {
+            [$errorField, $message] = ['tts_voice', 'Inworld needs a voice name or ID from the Inworld Portal, for example Dennis.'];
         } elseif ($values['voice'] === null) {
             [$errorField, $message] = ['tts_voice', 'Voice must be at most 64 characters of letters, digits and _ . : / @ + -'];
         } elseif ($values['timeout_seconds'] === null) {
@@ -170,9 +178,9 @@ require __DIR__ . '/tmpl/header.php';
             <div class="setting-row"><label for="tts_provider">Provider</label><select id="tts_provider" name="tts_provider"<?= voice_field('tts_provider', $errorField) ?>>
                 <?php foreach (TTS_PROVIDERS as $value => $label): ?><option value="<?= e($value) ?>"<?= $form['tts_provider'] === $value ? ' selected' : '' ?>><?= e($label) ?></option><?php endforeach; ?>
             </select></div>
-            <div class="setting-row"><label for="tts_url">URL</label><input type="url" id="tts_url" name="tts_url" maxlength="300" value="<?= e($form['tts_url']) ?>" placeholder="http://127.0.0.1:8086/v1/audio/speech"<?= voice_field('tts_url', $errorField) ?>></div>
-            <div class="setting-row"><label for="tts_model">Model <small>(PocketTTS: blank saves pocket-tts; openai: required)</small></label><input type="text" id="tts_model" name="tts_model" maxlength="200" value="<?= e($form['tts_model']) ?>"<?= voice_field('tts_model', $errorField) ?>></div>
-            <div class="setting-row"><label for="tts_voice">Voice <small>(PocketTTS: blank saves alba)</small></label><input type="text" id="tts_voice" name="tts_voice" maxlength="64" value="<?= e($form['tts_voice']) ?>"<?= voice_field('tts_voice', $errorField) ?>></div>
+            <div class="setting-row"><label for="tts_url">URL</label><input type="url" id="tts_url" name="tts_url" maxlength="300" value="<?= e($form['tts_url']) ?>" placeholder="http://127.0.0.1:8086/v1/audio/speech (Inworld: blank saves its endpoint)"<?= voice_field('tts_url', $errorField) ?>></div>
+            <div class="setting-row"><label for="tts_model">Model <small>(PocketTTS: blank saves pocket-tts; Inworld: blank saves inworld-tts-2-flash; openai: required)</small></label><input type="text" id="tts_model" name="tts_model" maxlength="200" value="<?= e($form['tts_model']) ?>"<?= voice_field('tts_model', $errorField) ?>></div>
+            <div class="setting-row"><label for="tts_voice">Voice <small>(PocketTTS: blank saves alba; Inworld: a voice name or ID, required)</small></label><input type="text" id="tts_voice" name="tts_voice" maxlength="64" value="<?= e($form['tts_voice']) ?>"<?= voice_field('tts_voice', $errorField) ?>></div>
             <div class="setting-row"><label for="tts_timeout">Timeout (seconds, 1-120)</label><input type="number" id="tts_timeout" name="tts_timeout" min="1" max="120" required value="<?= e($form['tts_timeout']) ?>"<?= voice_field('tts_timeout', $errorField) ?>></div>
             <div class="preview-actions"><button type="submit">Save text to speech</button></div>
         </form>
