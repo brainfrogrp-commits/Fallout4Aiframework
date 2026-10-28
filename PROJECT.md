@@ -77,7 +77,7 @@ Unknown. A blocked stage does not stop the others.
 |---|---|---|---|
 | 1. Brief: game, starting feature, mod name | source: the Brief rows above | done | 2026-10-28, source: brief from conversation |
 | 2. Integration plan; each Unknown researched, with an option chosen | source: Gameplay design rows filled, with an existing mechanism for the requested loop and any automatic trigger, or the missing one named with its next probe; every plan row cited, or Unknown with an option chosen | in progress: install surveyed from f4sevr.log and modlist; loader and gaze probes next | 2026-10-28, source: user's f4sevr.log and modlist.txt, Mantella source |
-| 3. DwemerDistro: own id committed, deployed | build: `project.ps1 deploy -WslDistro <name>` reported the commit deployed (health ok, exposure probes HTTP 403). Doctor output is diagnostic only; pairing is part of 6b | in progress: own id set; commit, then deploy | |
+| 3. DwemerDistro: own id committed, deployed | build: `project.ps1 deploy -WslDistro <name>` reported the commit deployed (health ok, exposure probes HTTP 403). Doctor output is diagnostic only; pairing is part of 6b | done | 2026-10-28, build: deploy of 9624a16 healthy on listeners 8081, 8083, 8088 and 19000, 14 of 14 protected paths HTTP 403 |
 | 4. LLM | provider: the dashboard **Send test**, or a real `turn.php` turn (same server path), returned a real reply from the chosen provider (nothing has to answer on port 1234 unless that is the provider) | not started | |
 | 5. Voice | user-reported or in-game: a PocketTTS reply heard on the dashboard **Speak** test or in the game (a generated WAV is not heard); or `not wanted` | not started | |
 | 6a. Game-side build | build: the port's preflight passed and its build finished into the folders under Paths (for example its doctor, then its build exit 0 with a schema-2 `build.json`, [build records](docs/PORT_BUILD_RECORDS.md)) | not started | |
@@ -113,6 +113,7 @@ uncommitted code and interrupted checks remain explicit pending work.
 | 2026-10-28 | Started from KAGRENAC AI Mod Maker commit 1f845fbd0611 (equivalent of `project.ps1 new`, done by hand on Linux) | An independent copy with its own id; the template is unchanged |
 | 2026-10-28 | One repository; game side in `ports/fo4vr/` | Template default |
 | 2026-10-28 | Settings in an MCM VR menu; push-to-talk controller, button and hold/toggle configurable there | User request; MCM VR is already in the list and needs no terminal records |
+| 2026-10-28 | `chmod g-w /var/www/html` in DwemerAI4Skyrim3 (was `drwxrwsr-x dwemer:www-data`) | Core refuses a group-writable web root; undo with `chmod g+w /var/www/html`. Update Distro may reset it |
 | 2026-10-28 | Build the plugin with GitHub Actions (Windows runner) | User has no Visual Studio; the DLL is downloaded from the run |
 | 2026-10-28 | Voice-only replies (no subtitles); push-to-talk speech input instead of the typed composer | User's choice; VR has no keyboard |
 
@@ -126,3 +127,4 @@ run. Kind is one of source, build, fixture, provider, user-reported or in-game; 
 |---|---|---|---|
 | 2026-10-28 | source | Copied template commit 1f845fbd0611 with `git archive`; set id, name and server folder | Nothing deployed or built yet |
 | 2026-10-28 | source | Read user's f4sevr.log and MO2 modlist.txt | F4SEVR 0.6.21 loads 40 plugins; 246 full plugins, ~9 slots free; Mantella, F4SE_HTTP and TopicInfoPatcher present |
+| 2026-10-28 | build | `project.ps1 deploy -WslDistro DwemerAI4Skyrim3` (after `chmod g-w /var/www/html`) | Installed 9624a16 at /var/www/html/Fallout4AIFrameworkServer; health ok on 4 listeners; config made dashboard-writable |

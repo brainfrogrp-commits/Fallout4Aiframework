@@ -28,3 +28,15 @@ input may behave differently outside settings; visible input, focus, controls,
 pause/death/restart and current observations still need the player's test.
 Real providers and heard voice were not tested. The launcher candidate was not
 published as a product release; the full production updater was not exercised.
+
+## Fallout 4 AI Framework (fo4vr) setup, 2026-10-28
+
+- **Deploy, first run:** Core refused with "/var/www/html must be a folder owned by root or dwemer
+  that no group or other user can change". The user's long-lived DwemerDistro (with CHIM, Stobe,
+  Dialectic) had `drwxrwsr-x dwemer:www-data`. `chmod g-w /var/www/html` fixed it; contents kept.
+  Generic, not engine-specific. Minimal upstream improvement: doctor could check the web root's
+  mode and print the exact `chmod g-w` fix before deploy, instead of failing inside Core.
+- **Doctor before deploy:** reports FAIL (HTTP 403, then 404) for a server that is simply not
+  installed yet. Expected, but reads as a problem on a first run.
+- **`project.ps1 new` needs Windows:** the project was created by copying committed template HEAD
+  with `git archive` and making the same manifest and PROJECT.md edits by hand.
