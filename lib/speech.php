@@ -111,8 +111,9 @@ final class SpeechService
             'modelId' => $model !== '' ? $model : self::INWORLD_MODEL,
             'audioConfig' => ['audioEncoding' => 'LINEAR16', 'sampleRateHertz' => self::INWORLD_RATE]];
         $url = (string)($tts['url'] ?? '');
+        $url = $url !== '' ? $url : self::INWORLD_URL;
         try {
-            [$status, $body] = http_post($url !== '' ? $url : self::INWORLD_URL,
+            [$status, $body] = http_post($url,
                 ['Content-Type: application/json', "Authorization: Basic $credential"], json_encode($request),
                 (int)($tts['timeout_seconds'] ?? 30), intdiv(self::MAX_WAV_BYTES * 4, 3) + 65536);
         } catch (Throwable $error) {
@@ -126,7 +127,7 @@ final class SpeechService
             $audio = is_string($encoded) ? base64_decode($encoded, true) : false;
         }
         if (!is_string($audio) || $audio === '' || strlen($audio) > self::MAX_WAV_BYTES) {
-            app_log("TTS failed with HTTP $status");
+            app_log("TTS failed with HTTP $status from " . (parse_url($url, PHP_URL_HOST) ?: 'an invalid URL'));
             return [null, "provider HTTP $status, voice from {$this->voiceSource}"];
         }
         $wav = is_wav($audio) ? $audio : self::pcmToWav($audio, self::INWORLD_RATE);

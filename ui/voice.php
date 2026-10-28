@@ -12,6 +12,8 @@ const STT_PROVIDERS = ['parakeet' => 'Parakeet (DwemerDistro)', 'fasterwhisper' 
 const POCKETTTS_DEFAULTS = ['model' => 'pocket-tts', 'voice' => 'alba'];
 // What a blank URL or model saves for Inworld; the voice is any name or ID from the Inworld Portal.
 const INWORLD_DEFAULTS = ['url' => 'https://api.inworld.ai/tts/v1/voice', 'model' => 'inworld-tts-2-flash'];
+// PocketTTS's address and model, which stay in the form when the provider is switched to Inworld.
+const POCKETTTS_URL = 'http://127.0.0.1:8086/v1/audio/speech';
 const STT_DEFAULT_URLS = [
     'parakeet' => 'http://127.0.0.1:8022/v1/audio/transcriptions',
     'fasterwhisper' => 'http://127.0.0.1:9876/api/v0/transcribe',
@@ -69,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $config !== null) {
             $form['tts_model'] = $form['tts_model'] !== '' ? $form['tts_model'] : POCKETTTS_DEFAULTS['model'];
             $form['tts_voice'] = $form['tts_voice'] !== '' ? $form['tts_voice'] : POCKETTTS_DEFAULTS['voice'];
         } elseif ($form['tts_provider'] === 'inworld') {
-            $form['tts_url'] = $form['tts_url'] !== '' ? $form['tts_url'] : INWORLD_DEFAULTS['url'];
-            $form['tts_model'] = $form['tts_model'] !== '' ? $form['tts_model'] : INWORLD_DEFAULTS['model'];
+            $form['tts_url'] = !in_array($form['tts_url'], ['', POCKETTTS_URL], true) ? $form['tts_url'] : INWORLD_DEFAULTS['url'];
+            $form['tts_model'] = !in_array($form['tts_model'], ['', POCKETTTS_DEFAULTS['model']], true) ? $form['tts_model'] : INWORLD_DEFAULTS['model'];
         }
         $values = [
             'enabled' => $form['tts_enabled'],
